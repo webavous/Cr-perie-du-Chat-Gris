@@ -1,7 +1,7 @@
 const { getSupabase } = require("./_supabase");
 const { verifyToken, getTokenFromReq } = require("./_auth");
 
-const ALLOWED = ["hours", "closure", "specials", "menu"];
+const ALLOWED = ["hours", "closure", "specials", "menu", "gallery"];
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") return res.status(405).json({ error: "method_not_allowed" });
