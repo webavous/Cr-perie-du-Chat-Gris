@@ -5,7 +5,7 @@ module.exports = async (req, res) => {
   const supabase = getSupabase();
   const { data, error } = await supabase
     .from("site_data")
-    .select("hours,closure,specials,menu,gallery")
+    .select("hours,closure,specials,menu,gallery,events")
     .eq("id", 1)
     .single();
   if (error) return res.status(500).json({ error: "db_error" });
