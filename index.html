@@ -212,6 +212,25 @@
   }
   .supplement-line span:last-child{color:var(--ardoise-deep);white-space:nowrap;}
 
+  /* ---------- Événements ---------- */
+  .events-section{background:var(--creme-clair);border-top:1px solid var(--ligne);border-bottom:1px solid var(--ligne);}
+  .events-grid{display:grid;grid-template-columns:1.2fr 0.8fr;gap:64px;align-items:center;}
+  @media(max-width:860px){.events-grid{grid-template-columns:1fr;gap:36px;}}
+  .events-intro{margin-top:16px;color:#4B5259;font-size:1.02rem;max-width:520px;}
+  .events-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px;}
+  .event-chip{
+    display:inline-block;padding:8px 16px;border-radius:999px;
+    border:1px solid var(--caramel);color:var(--caramel-deep);
+    font-size:0.85rem;background:#fff;
+  }
+  .events-visual{display:flex;justify-content:center;}
+  .events-visual svg{width:100%;max-width:280px;height:auto;}
+  @media(max-width:860px){.events-visual{order:-1;}}
+
+  .event-chip-editor{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+  .event-chip-edit-row{display:grid;grid-template-columns:1fr 40px;gap:10px;}
+  .event-chip-edit-row input{padding:9px 11px;border:1px solid var(--ligne);border-radius:8px;font-size:0.87rem;background:#fff;}
+
   /* ---------- Horaires ---------- */
   .hours{background:var(--ardoise-deep);color:var(--creme-clair);}
   .hours .eyebrow{color:var(--caramel-clair);}
@@ -428,6 +447,7 @@
       <li><a href="#histoire">L'histoire</a></li>
       <li><a href="#carte">La carte</a></li>
       <li><a href="#gallery-section">Photos</a></li>
+      <li><a href="#evenements">Événements</a></li>
       <li><a href="#horaires">Horaires</a></li>
       <li><a href="#acces">Accès</a></li>
     </ul>
@@ -502,6 +522,30 @@
       <h2>Nos crêpes &amp; galettes</h2>
     </div>
     <div class="gallery-grid" id="gallery-grid"></div>
+  </div>
+</section>
+
+<section id="evenements" class="events-section">
+  <div class="wrap">
+    <div class="events-grid">
+      <div>
+        <div class="eyebrow">Prestations événementielles</div>
+        <h2 id="events-title">Le Chat Gris se déplace chez vous</h2>
+        <p id="events-intro" class="events-intro">Mariage, anniversaire, entreprise, fête de village... on installe nos billigs et on prépare galettes et crêpes fraîches sur place, devant vos invités.</p>
+        <div class="events-chips" id="events-chips"></div>
+        <div class="hero-actions" style="margin-top:32px;">
+          <a class="btn btn-primary" href="tel:0241611143">Demander un devis — 02 41 61 11 43</a>
+        </div>
+      </div>
+      <div class="events-visual">
+        <svg viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="160" cy="160" r="130" fill="none" stroke="var(--caramel)" stroke-width="2" stroke-dasharray="4 8"/>
+          <circle cx="160" cy="190" r="70" fill="var(--ardoise-deep)"/>
+          <ellipse cx="160" cy="150" rx="78" ry="14" fill="var(--ardoise)"/>
+          <path d="M95 150 Q160 130 225 150" stroke="var(--caramel-clair)" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -613,6 +657,7 @@
       <button class="admin-tab" data-tab="tab-suggestions" type="button">Suggestions du moment</button>
       <button class="admin-tab" data-tab="tab-horaires" type="button">Horaires</button>
       <button class="admin-tab" data-tab="tab-carte" type="button">La carte</button>
+      <button class="admin-tab" data-tab="tab-evenements" type="button">Événements</button>
       <button class="admin-tab" data-tab="tab-photos" type="button">Photos</button>
       <button class="admin-tab" data-tab="tab-compte" type="button">Mon compte</button>
     </div>
@@ -665,6 +710,19 @@
       <button type="button" class="add-item-btn" id="add-category-btn">+ Ajouter une catégorie</button>
       <div class="save-bar">
         <button class="btn btn-primary" id="save-menu-btn" type="button">Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- Événements -->
+    <div class="admin-panel" id="tab-evenements">
+      <p class="hint" style="margin-bottom:20px;">Présentez votre service de crêpes/galettes préparées sur place lors d'événements (mariages, entreprises...).</p>
+      <div class="field"><label for="ev-title">Titre</label><input type="text" id="ev-title" placeholder="Ex : Le Chat Gris se déplace chez vous"></div>
+      <div class="field"><label for="ev-intro">Texte de présentation</label><textarea id="ev-intro" placeholder="Décrivez votre prestation événementielle..."></textarea></div>
+      <label style="display:block;font-size:0.8rem;color:#5b6167;margin-bottom:8px;">Types d'événements (petites étiquettes affichées sur le site)</label>
+      <div id="events-editor" class="event-chip-editor"></div>
+      <button type="button" class="add-item-btn" id="add-event-item-btn">+ Ajouter un type d'événement</button>
+      <div class="save-bar">
+        <button class="btn btn-primary" id="save-events-btn" type="button">Enregistrer</button>
       </div>
     </div>
 
@@ -781,16 +839,23 @@
     ]
   };
   const DEFAULT_GALLERY = [];
+  const DEFAULT_EVENTS = {
+    title: "Le Chat Gris se déplace chez vous",
+    intro: "Mariage, anniversaire, entreprise, fête de village... on installe nos billigs et on prépare galettes et crêpes fraîches sur place, devant vos invités. Une animation gourmande et conviviale, pour toutes les occasions.",
+    items: ["Mariages", "Anniversaires", "Entreprises & séminaires", "Fêtes de village & marchés"]
+  };
 
   let state = {
     hours: DEFAULT_HOURS,
     closure: DEFAULT_CLOSURE,
     specials: DEFAULT_SPECIALS,
     menu: DEFAULT_MENU,
-    gallery: DEFAULT_GALLERY
+    gallery: DEFAULT_GALLERY,
+    events: DEFAULT_EVENTS
   };
   let isAdmin = false;
   let galleryWorking = [];
+  let eventItemsWorking = [];
 
   function escapeHtml(str){
     if(str === undefined || str === null) return "";
@@ -845,10 +910,11 @@
         closure: j.closure || DEFAULT_CLOSURE,
         specials: j.specials || DEFAULT_SPECIALS,
         menu: normalizeMenu(j.menu),
-        gallery: j.gallery || DEFAULT_GALLERY
+        gallery: j.gallery || DEFAULT_GALLERY,
+        events: j.events || DEFAULT_EVENTS
       };
     }catch(e){
-      return { hours:DEFAULT_HOURS, closure:DEFAULT_CLOSURE, specials:DEFAULT_SPECIALS, menu:DEFAULT_MENU, gallery:DEFAULT_GALLERY };
+      return { hours:DEFAULT_HOURS, closure:DEFAULT_CLOSURE, specials:DEFAULT_SPECIALS, menu:DEFAULT_MENU, gallery:DEFAULT_GALLERY, events:DEFAULT_EVENTS };
     }
   }
 
@@ -989,11 +1055,21 @@
     `).join("");
   }
 
+  function renderEvents(){
+    const ev = state.events || DEFAULT_EVENTS;
+    document.getElementById("events-title").textContent = ev.title || DEFAULT_EVENTS.title;
+    document.getElementById("events-intro").textContent = ev.intro || DEFAULT_EVENTS.intro;
+    const chips = document.getElementById("events-chips");
+    const items = ev.items || [];
+    chips.innerHTML = items.map(label => `<span class="event-chip">${escapeHtml(label)}</span>`).join("");
+  }
+
   function renderAll(){
     renderAnnounce();
     renderHours();
     renderMenu();
     renderGallery();
+    renderEvents();
   }
 
   /* ---------------------------------------------------------
@@ -1032,6 +1108,7 @@
     state.specials = pub.specials;
     state.menu = pub.menu;
     state.gallery = pub.gallery;
+    state.events = pub.events;
 
     isAdmin = await apiWhoAmI();
     updateAdminLinkLabel();
@@ -1155,10 +1232,53 @@
     const categories = (state.menu && state.menu.categories) || [];
     categories.forEach(cat => menuEditor.appendChild(buildCategoryBlock(cat)));
 
+    // Événements
+    const ev = state.events || DEFAULT_EVENTS;
+    document.getElementById("ev-title").value = ev.title || "";
+    document.getElementById("ev-intro").value = ev.intro || "";
+    eventItemsWorking = (ev.items || []).slice();
+    renderEventItemsEditor();
+
     // Photos
     galleryWorking = (state.gallery || []).map(p => ({ caption: p.caption || "", dataUrl: p.dataUrl }));
     renderPhotoAdminList();
   }
+
+  function renderEventItemsEditor(){
+    const container = document.getElementById("events-editor");
+    container.innerHTML = "";
+    eventItemsWorking.forEach((label, idx) => {
+      const row = document.createElement("div");
+      row.className = "event-chip-edit-row";
+      row.innerHTML = `
+        <input type="text" class="ev-item-input" placeholder="Ex : Mariages" value="${escapeHtml(label)}">
+        <button type="button" class="remove-item-btn" title="Supprimer">✕</button>
+      `;
+      row.querySelector(".ev-item-input").addEventListener("input", (e) => {
+        eventItemsWorking[idx] = e.target.value;
+      });
+      row.querySelector(".remove-item-btn").addEventListener("click", () => {
+        eventItemsWorking.splice(idx, 1);
+        renderEventItemsEditor();
+      });
+      container.appendChild(row);
+    });
+  }
+
+  document.getElementById("add-event-item-btn").addEventListener("click", () => {
+    eventItemsWorking.push("");
+    renderEventItemsEditor();
+  });
+
+  document.getElementById("save-events-btn").addEventListener("click", async () => {
+    const title = document.getElementById("ev-title").value.trim() || DEFAULT_EVENTS.title;
+    const intro = document.getElementById("ev-intro").value.trim() || DEFAULT_EVENTS.intro;
+    const items = eventItemsWorking.map(s => s.trim()).filter(Boolean);
+    state.events = { title, intro, items };
+    await apiSave("events", state.events);
+    renderEvents();
+    showToast("Section événements mise à jour ✓");
+  });
 
   function addMenuRow(list, item){
     const row = document.createElement("div");
