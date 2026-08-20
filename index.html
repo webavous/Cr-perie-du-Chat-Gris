@@ -553,19 +553,15 @@
   <div class="wrap">
     <div class="section-head">
       <div class="eyebrow">Horaires</div>
-      <h2>Ouvert du mercredi au dimanche</h2>
-      <p>Service en continu midi et soir, du mercredi au dimanche. Fermé le lundi et le mardi.</p>
+      <h2>Ouvert du mardi au dimanche</h2>
+      <p>Service en continu midi et soir, du mardi au dimanche. Fermé le lundi.</p>
     </div>
     <div class="hours-grid">
       <table class="hours-table" id="hours-table"></table>
       <div class="practical">
         <div class="practical-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
-          <div><b>Ouvert toute l'année</b><span>Horaires valables du 30/12/2025 au 29/12/2026</span></div>
-        </div>
-        <div class="practical-item">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 6L9 17l-5-5"/></svg>
-          <div><b>Sur place ou à emporter</b><span>Terrasse d'été avec vue sur l'Oudon · Wifi</span></div>
+          <div><b>Sur place ou à emporter</b><span>Terrasse d'été avec vue sur l'Oudon</span></div>
         </div>
         <div class="practical-item">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
@@ -768,7 +764,7 @@
 
   const DEFAULT_HOURS = [
     { closed:true,  slots:[{start:"",end:""},{start:"",end:""}] }, // Lundi
-    { closed:true,  slots:[{start:"",end:""},{start:"",end:""}] }, // Mardi
+    { closed:false, slots:[{start:"11:30",end:"14:00"},{start:"19:00",end:"21:00"}] }, // Mardi
     { closed:false, slots:[{start:"11:30",end:"14:00"},{start:"19:00",end:"21:00"}] }, // Mercredi
     { closed:false, slots:[{start:"11:30",end:"14:00"},{start:"19:00",end:"21:00"}] }, // Jeudi
     { closed:false, slots:[{start:"11:30",end:"14:00"},{start:"19:00",end:"21:00"}] }, // Vendredi
