@@ -175,20 +175,42 @@
     border-radius:12px;padding:16px 20px;font-size:0.86rem;color:#6b7178;
     margin-bottom:48px;max-width:640px;
   }
-  .menu-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--ligne);}
-  @media(max-width:860px){.menu-cols{grid-template-columns:1fr;}}
-  .menu-col{padding:36px 28px;border-right:1px solid var(--ligne);border-bottom:1px solid var(--ligne);}
-  .menu-col:last-child{border-right:none;}
-  @media(max-width:860px){.menu-col{border-right:none;}}
+  .menu-cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:20px;}
+  .menu-col{
+    padding:32px 28px;background:var(--creme-clair);
+    border:1px solid var(--ligne);border-radius:16px;
+  }
   .menu-col h3{
     font-family:var(--serif);font-style:italic;font-size:1.3rem;font-weight:450;
     margin-bottom:22px;color:var(--caramel-deep);
+  }
+  .menu-col h3.menu-subhead{margin-top:8px;}
+  .menu-col h4.menu-subhead{
+    font-family:var(--serif);font-style:italic;font-size:1.08rem;font-weight:450;
+    color:var(--caramel-deep);margin:26px 0 16px;padding-top:18px;border-top:1px dashed var(--ligne);
+  }
+  .menu-subnote{
+    font-family:var(--sans);font-style:normal;font-size:0.7rem;letter-spacing:0.04em;
+    text-transform:uppercase;color:#8A9095;font-weight:500;vertical-align:middle;
   }
   .menu-item{display:flex;justify-content:space-between;gap:14px;padding:12px 0;border-bottom:1px dotted var(--ligne);}
   .menu-item:last-child{border-bottom:none;}
   .menu-item .name{font-size:0.98rem;}
   .menu-item .desc{font-size:0.82rem;color:#7b8188;margin-top:3px;}
   .menu-item .price{font-family:var(--serif);color:var(--ardoise-deep);white-space:nowrap;font-size:0.98rem;}
+
+  .menu-supplements{
+    margin-top:22px;padding-top:18px;border-top:1px dashed var(--ligne);
+  }
+  .supplements-title{
+    font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;
+    color:#8A9095;font-weight:500;margin-bottom:10px;
+  }
+  .supplement-line{
+    display:flex;justify-content:space-between;gap:10px;
+    font-size:0.85rem;color:#6b7178;padding:4px 0;
+  }
+  .supplement-line span:last-child{color:var(--ardoise-deep);white-space:nowrap;}
 
   /* ---------- Horaires ---------- */
   .hours{background:var(--ardoise-deep);color:var(--creme-clair);}
@@ -316,10 +338,40 @@
   .menu-edit-item{display:grid;grid-template-columns:1.2fr 1.4fr 100px 40px;gap:10px;margin-bottom:10px;align-items:center;}
   .menu-edit-item input{padding:9px 11px;border:1px solid var(--ligne);border-radius:8px;font-size:0.87rem;background:#fff;}
   @media(max-width:700px){.menu-edit-item{grid-template-columns:1fr 1fr;}}
+  .supplement-edit-item{grid-template-columns:1.6fr 120px 40px;}
+  @media(max-width:700px){.supplement-edit-item{grid-template-columns:1fr 90px 40px;}}
   .remove-item-btn{
     background:none;border:1px solid var(--ligne);border-radius:8px;color:var(--caramel);
     cursor:pointer;height:38px;font-size:1rem;
   }
+
+  .category-edit-block{
+    background:#fff;border:1px solid var(--ligne);border-radius:14px;
+    padding:26px;margin-bottom:22px;
+  }
+  .category-edit-header{display:grid;grid-template-columns:1.4fr 1fr;gap:12px;margin-bottom:22px;}
+  @media(max-width:700px){.category-edit-header{grid-template-columns:1fr;}}
+  .category-edit-header .cat-title{
+    padding:11px 13px;border:1px solid var(--ligne);border-radius:8px;
+    font-family:var(--serif);font-style:italic;font-size:1.05rem;background:var(--creme-clair);
+  }
+  .category-edit-header .cat-note{
+    padding:11px 13px;border:1px solid var(--ligne);border-radius:8px;
+    font-family:var(--sans);font-size:0.85rem;background:var(--creme-clair);
+  }
+  .category-supplements{margin-top:20px;padding-top:18px;border-top:1px dashed var(--ligne);}
+  .supplements-edit-label{font-size:0.78rem;text-transform:uppercase;letter-spacing:0.05em;color:#8A9095;margin-bottom:12px;}
+  .category-edit-footer{
+    display:flex;gap:10px;margin-top:22px;padding-top:18px;
+    border-top:1px solid var(--ligne);flex-wrap:wrap;
+  }
+  .category-edit-footer button{
+    font-size:0.82rem;border:1px solid var(--ligne);background:none;border-radius:8px;
+    padding:8px 14px;cursor:pointer;color:#5b6167;
+  }
+  .category-edit-footer button:hover{border-color:var(--ardoise);}
+  .category-edit-footer .cat-delete{color:var(--caramel);}
+  #add-category-btn{margin-bottom:24px;}
   .add-item-btn{
     font-size:0.85rem;border:1px dashed var(--ligne);background:none;border-radius:8px;
     padding:9px 16px;cursor:pointer;color:#5b6167;margin-top:4px;
@@ -608,8 +660,9 @@
 
     <!-- Carte -->
     <div class="admin-panel" id="tab-carte">
-      <p class="hint" style="margin-bottom:20px;">Ajoutez, modifiez ou supprimez les plats de chaque catégorie.</p>
+      <p class="hint" style="margin-bottom:20px;">Créez vos propres catégories (galettes, crêpes, salades, menus spéciaux...), dans l'ordre que vous voulez. Utilisez ↑ / ↓ pour réorganiser.</p>
       <div id="menu-editor"></div>
+      <button type="button" class="add-item-btn" id="add-category-btn">+ Ajouter une catégorie</button>
       <div class="save-bar">
         <button class="btn btn-primary" id="save-menu-btn" type="button">Enregistrer</button>
       </div>
@@ -672,28 +725,61 @@
     crepe:{ name:"", desc:"", price:"" }
   };
 
+  // La carte est maintenant une liste libre de catégories, chacune avec son
+  // propre titre, un sous-titre optionnel, ses plats, et ses suppléments
+  // optionnels. L'ordre du tableau = l'ordre d'affichage sur le site.
   const DEFAULT_MENU = {
-    galettes:[
-      {name:"Complète", desc:"Jambon, œuf, emmental", price:"9,50 €"},
-      {name:"Forestière", desc:"Champignons, crème, persillade", price:"10,50 €"},
-      {name:"Andouille de pays", desc:"Oignons confits, moutarde à l'ancienne", price:"11,50 €"},
-      {name:"Chèvre miel", desc:"Chèvre chaud, miel, noix", price:"10,90 €"}
-    ],
-    crepes:[
-      {name:"Sucre — beurre", desc:"", price:"4,00 €"},
-      {name:"Caramel au beurre salé", desc:"", price:"5,50 €"},
-      {name:"Pomme flambée au calvados", desc:"", price:"6,50 €"},
-      {name:"Chocolat maison, chantilly", desc:"", price:"6,00 €"}
-    ],
-    boissons:[
-      {name:"Cidre brut fermier, la bolée", desc:"", price:"3,50 €"},
-      {name:"Jus de pomme artisanal", desc:"", price:"3,00 €"},
-      {name:"Menu enfant", desc:"Crêpe + boisson + dessert", price:"9,90 €"},
-      {name:"Menu adulte du jour", desc:"Midi en semaine", price:"10,90–20 €"}
+    categories: [
+      {
+        title:"Galettes classiques", note:"100% sarrasin",
+        items:[
+          {name:"Complète", desc:"Jambon, œuf, emmental", price:"9,50 €"},
+          {name:"Forestière", desc:"Champignons, crème, persillade", price:"10,50 €"}
+        ],
+        supplements:[
+          {name:"Fromage supplémentaire", price:"1,00 €"},
+          {name:"Œuf supplémentaire", price:"1,00 €"}
+        ]
+      },
+      {
+        title:"Galettes spéciales", note:"100% sarrasin",
+        items:[
+          {name:"Andouille de pays", desc:"Oignons confits, moutarde à l'ancienne", price:"11,50 €"},
+          {name:"Chèvre miel", desc:"Chèvre chaud, miel, noix", price:"10,90 €"}
+        ],
+        supplements:[]
+      },
+      {
+        title:"Crêpes classiques", note:"",
+        items:[
+          {name:"Sucre — beurre", desc:"", price:"4,00 €"},
+          {name:"Caramel au beurre salé", desc:"", price:"5,50 €"}
+        ],
+        supplements:[
+          {name:"Chantilly", price:"0,50 €"},
+          {name:"Boule de glace supplémentaire", price:"1,50 €"}
+        ]
+      },
+      {
+        title:"Crêpes spéciales", note:"",
+        items:[
+          {name:"Pomme flambée au calvados", desc:"", price:"6,50 €"},
+          {name:"Chocolat maison, chantilly", desc:"", price:"6,00 €"}
+        ],
+        supplements:[]
+      },
+      {
+        title:"À boire", note:"",
+        items:[
+          {name:"Cidre brut fermier, la bolée", desc:"", price:"3,50 €"},
+          {name:"Jus de pomme artisanal", desc:"", price:"3,00 €"},
+          {name:"Menu enfant", desc:"Crêpe + boisson + dessert", price:"9,90 €"},
+          {name:"Menu adulte du jour", desc:"Midi en semaine", price:"10,90–20 €"}
+        ],
+        supplements:[]
+      }
     ]
   };
-
-  const CATEGORY_LABELS = { galettes:"Les galettes", crepes:"Les crêpes", boissons:"À boire" };
   const DEFAULT_GALLERY = [];
 
   let state = {
@@ -716,6 +802,39 @@
   /* ---------------------------------------------------------
      Interface backend — API Vercel + Supabase (/api/...)
   --------------------------------------------------------- */
+
+  // Convertit les anciens formats de carte (versions précédentes du site)
+  // vers le nouveau format libre { categories:[{title,note,items,supplements}] }
+  // pour ne jamais perdre une carte déjà saisie.
+  function normalizeMenu(raw){
+    if(raw && Array.isArray(raw.categories)) return raw;
+    if(raw && typeof raw === "object"){
+      const map = [
+        ["galettes_classiques","Galettes classiques","100% sarrasin","supplements_galettes"],
+        ["galettes_speciales","Galettes spéciales","100% sarrasin",null],
+        ["galettes","Galettes","",null],
+        ["crepes_classiques","Crêpes classiques","","supplements_crepes"],
+        ["crepes_speciales","Crêpes spéciales","",null],
+        ["crepes","Crêpes","",null],
+        ["boissons","À boire","",null]
+      ];
+      const categories = [];
+      const usedSupplements = new Set();
+      map.forEach(([key, title, note, supKey]) => {
+        if(raw[key] && raw[key].length){
+          let supplements = [];
+          if(supKey && raw[supKey] && !usedSupplements.has(supKey)){
+            supplements = raw[supKey];
+            usedSupplements.add(supKey);
+          }
+          categories.push({ title, note, items: raw[key], supplements });
+        }
+      });
+      if(categories.length) return { categories };
+    }
+    return DEFAULT_MENU;
+  }
+
   async function loadPublicData(){
     try{
       const res = await fetch("/api/data");
@@ -725,7 +844,7 @@
         hours: j.hours || DEFAULT_HOURS,
         closure: j.closure || DEFAULT_CLOSURE,
         specials: j.specials || DEFAULT_SPECIALS,
-        menu: j.menu || DEFAULT_MENU,
+        menu: normalizeMenu(j.menu),
         gallery: j.gallery || DEFAULT_GALLERY
       };
     }catch(e){
@@ -824,16 +943,30 @@
 
   function renderMenu(){
     const container = document.getElementById("menu-cols");
+    const categories = (state.menu && state.menu.categories) || [];
+    if(!categories.length){
+      container.innerHTML = `<div class="menu-col"><div class="menu-item"><div class="desc">Carte à venir</div></div></div>`;
+      return;
+    }
     let html = "";
-    Object.keys(CATEGORY_LABELS).forEach(cat => {
-      const items = (state.menu && state.menu[cat]) || [];
-      html += `<div class="menu-col"><h3>${CATEGORY_LABELS[cat]}</h3>`;
+    categories.forEach(cat => {
+      html += `<div class="menu-col">`;
+      html += `<h3>${escapeHtml(cat.title || "Sans titre")}${cat.note ? ` <span class="menu-subnote">${escapeHtml(cat.note)}</span>` : ""}</h3>`;
+      const items = cat.items || [];
       if(!items.length){
         html += `<div class="menu-item"><div class="desc">Carte à venir</div></div>`;
       }
       items.forEach(item => {
         html += `<div class="menu-item"><div><div class="name">${escapeHtml(item.name)}</div>${item.desc ? `<div class="desc">${escapeHtml(item.desc)}</div>` : ""}</div><div class="price">${escapeHtml(item.price)}</div></div>`;
       });
+      const supplements = cat.supplements || [];
+      if(supplements.length){
+        html += `<div class="menu-supplements"><div class="supplements-title">Suppléments</div>`;
+        supplements.forEach(sup => {
+          html += `<div class="supplement-line"><span>+ ${escapeHtml(sup.name)}</span><span>${escapeHtml(sup.price)}</span></div>`;
+        });
+        html += `</div>`;
+      }
       html += `</div>`;
     });
     container.innerHTML = html;
@@ -1019,18 +1152,8 @@
     // Carte
     const menuEditor = document.getElementById("menu-editor");
     menuEditor.innerHTML = "";
-    Object.keys(CATEGORY_LABELS).forEach(cat => {
-      const block = document.createElement("div");
-      block.className = "menu-edit-cat";
-      block.dataset.cat = cat;
-      block.innerHTML = `<h4>${CATEGORY_LABELS[cat]}</h4><div class="menu-edit-list"></div><button type="button" class="add-item-btn">+ Ajouter un plat</button>`;
-      menuEditor.appendChild(block);
-      const list = block.querySelector(".menu-edit-list");
-      (state.menu[cat] || []).forEach(item => addMenuRow(list, item));
-      block.querySelector(".add-item-btn").addEventListener("click", () => {
-        addMenuRow(list, {name:"", desc:"", price:""});
-      });
-    });
+    const categories = (state.menu && state.menu.categories) || [];
+    categories.forEach(cat => menuEditor.appendChild(buildCategoryBlock(cat)));
 
     // Photos
     galleryWorking = (state.gallery || []).map(p => ({ caption: p.caption || "", dataUrl: p.dataUrl }));
@@ -1048,6 +1171,68 @@
     `;
     row.querySelector(".remove-item-btn").addEventListener("click", () => row.remove());
     list.appendChild(row);
+  }
+
+  function addSupplementRow(list, item){
+    const row = document.createElement("div");
+    row.className = "menu-edit-item supplement-edit-item";
+    row.innerHTML = `
+      <input type="text" class="mi-name" placeholder="Nom du supplément" value="${escapeHtml(item.name)}">
+      <input type="text" class="mi-price" placeholder="Prix" value="${escapeHtml(item.price || "")}">
+      <button type="button" class="remove-item-btn" title="Supprimer">✕</button>
+    `;
+    row.querySelector(".remove-item-btn").addEventListener("click", () => row.remove());
+    list.appendChild(row);
+  }
+
+  function buildCategoryBlock(cat){
+    cat = cat || { title:"", note:"", items:[], supplements:[] };
+    const block = document.createElement("div");
+    block.className = "category-edit-block";
+    block.innerHTML = `
+      <div class="category-edit-header">
+        <input type="text" class="cat-title" placeholder="Titre de la catégorie (ex : Salades)" value="${escapeHtml(cat.title || "")}">
+        <input type="text" class="cat-note" placeholder="Sous-titre optionnel (ex : 100% sarrasin)" value="${escapeHtml(cat.note || "")}">
+      </div>
+      <div class="menu-edit-list"></div>
+      <button type="button" class="add-item-btn">+ Ajouter un plat</button>
+      <div class="category-supplements">
+        <div class="supplements-edit-label">Suppléments affichés sous cette catégorie (optionnel)</div>
+        <div class="supplement-edit-list"></div>
+        <button type="button" class="add-supplement-btn">+ Ajouter un supplément</button>
+      </div>
+      <div class="category-edit-footer">
+        <button type="button" class="cat-move-up">↑ Monter</button>
+        <button type="button" class="cat-move-down">↓ Descendre</button>
+        <button type="button" class="cat-delete">✕ Supprimer cette catégorie</button>
+      </div>
+    `;
+
+    const itemList = block.querySelector(".menu-edit-list");
+    (cat.items || []).forEach(item => addMenuRow(itemList, item));
+    block.querySelector(".add-item-btn").addEventListener("click", () => {
+      addMenuRow(itemList, { name:"", desc:"", price:"" });
+    });
+
+    const supList = block.querySelector(".supplement-edit-list");
+    (cat.supplements || []).forEach(sup => addSupplementRow(supList, sup));
+    block.querySelector(".add-supplement-btn").addEventListener("click", () => {
+      addSupplementRow(supList, { name:"", price:"" });
+    });
+
+    block.querySelector(".cat-move-up").addEventListener("click", () => {
+      const prev = block.previousElementSibling;
+      if(prev) block.parentNode.insertBefore(block, prev);
+    });
+    block.querySelector(".cat-move-down").addEventListener("click", () => {
+      const next = block.nextElementSibling;
+      if(next) block.parentNode.insertBefore(next, block);
+    });
+    block.querySelector(".cat-delete").addEventListener("click", () => {
+      if(confirm("Supprimer cette catégorie et tous ses plats ?")) block.remove();
+    });
+
+    return block;
   }
 
   /* ---------------------------------------------------------
@@ -1160,20 +1345,31 @@
     showToast("Horaires mis à jour ✓");
   });
 
+  document.getElementById("add-category-btn").addEventListener("click", () => {
+    document.getElementById("menu-editor").appendChild(buildCategoryBlock());
+  });
+
   document.getElementById("save-menu-btn").addEventListener("click", async () => {
-    const newMenu = {};
-    document.querySelectorAll("#menu-editor .menu-edit-cat").forEach(block => {
-      const cat = block.dataset.cat;
+    const categories = [];
+    document.querySelectorAll("#menu-editor .category-edit-block").forEach(block => {
+      const title = block.querySelector(".cat-title").value.trim();
+      const note = block.querySelector(".cat-note").value.trim();
       const items = [];
-      block.querySelectorAll(".menu-edit-item").forEach(row => {
+      block.querySelectorAll(".menu-edit-list .menu-edit-item").forEach(row => {
         const name = row.querySelector(".mi-name").value.trim();
         const desc = row.querySelector(".mi-desc").value.trim();
         const price = row.querySelector(".mi-price").value.trim();
         if(name) items.push({ name, desc, price });
       });
-      newMenu[cat] = items;
+      const supplements = [];
+      block.querySelectorAll(".supplement-edit-list .menu-edit-item").forEach(row => {
+        const name = row.querySelector(".mi-name").value.trim();
+        const price = row.querySelector(".mi-price").value.trim();
+        if(name) supplements.push({ name, price });
+      });
+      if(title || items.length) categories.push({ title, note, items, supplements });
     });
-    state.menu = newMenu;
+    state.menu = { categories };
     await apiSave("menu", state.menu);
     renderMenu();
     showToast("Carte mise à jour ✓");
