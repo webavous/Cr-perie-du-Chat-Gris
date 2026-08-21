@@ -228,6 +228,47 @@
   }
   .supplement-line span:last-child{color:var(--ardoise-deep);white-space:nowrap;}
 
+  /* Menu / formule (plat au choix, dessert au choix...) */
+  .menu-item.menu-formule{display:block;padding:16px 0;}
+  .formule-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:8px;}
+  .formule-head .name{font-size:0.98rem;font-weight:600;color:var(--ardoise-deep);}
+  .formule-head .price{font-family:var(--serif);color:var(--ardoise-deep);white-space:nowrap;font-size:0.98rem;}
+  .formule-note{
+    font-size:0.72rem;text-transform:uppercase;letter-spacing:0.04em;
+    color:var(--caramel-deep);margin-bottom:12px;
+  }
+  .formule-choice{margin-bottom:9px;}
+  .formule-choice:last-child{margin-bottom:0;}
+  .choice-label{font-size:0.78rem;font-weight:600;color:#5b6167;margin-bottom:2px;}
+  .choice-options{font-size:0.86rem;color:#4B5259;line-height:1.5;}
+
+  /* Éditeur admin : blocs formule */
+  .category-edit-add-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:4px;}
+  .add-formule-btn{
+    font-size:0.85rem;border:1px dashed var(--ligne);background:none;border-radius:8px;
+    padding:9px 16px;cursor:pointer;color:#5b6167;
+  }
+  .add-formule-btn:hover{border-color:var(--caramel);color:var(--caramel-deep);}
+  .formule-edit-block{
+    border:1px solid var(--ligne);border-radius:10px;padding:16px;
+    margin-bottom:10px;background:#fbfaf8;
+  }
+  .formule-edit-top{display:grid;grid-template-columns:1.4fr 110px 40px;gap:10px;margin-bottom:10px;}
+  .formule-edit-top input{padding:9px 11px;border:1px solid var(--ligne);border-radius:8px;font-size:0.87rem;background:#fff;}
+  @media(max-width:700px){.formule-edit-top{grid-template-columns:1fr 1fr;}}
+  input.mf-note{
+    width:100%;padding:9px 11px;border:1px solid var(--ligne);border-radius:8px;
+    font-size:0.85rem;margin-bottom:14px;background:#fff;box-sizing:border-box;
+  }
+  .mf-groups{display:flex;flex-direction:column;gap:10px;margin-bottom:12px;}
+  .mf-group-row{border:1px dashed var(--ligne);border-radius:8px;padding:10px;background:#fff;}
+  .mf-group-top{display:flex;gap:8px;margin-bottom:8px;}
+  .mf-group-top input{flex:1;padding:8px 10px;border:1px solid var(--ligne);border-radius:7px;font-size:0.85rem;}
+  .mf-group-options{
+    width:100%;min-height:70px;padding:8px 10px;border:1px solid var(--ligne);
+    border-radius:7px;font-size:0.83rem;font-family:var(--sans);resize:vertical;box-sizing:border-box;
+  }
+
   /* ---------- Événements ---------- */
   .events-section{background:var(--creme-clair);border-top:1px solid var(--ligne);border-bottom:1px solid var(--ligne);}
   .events-grid{display:grid;grid-template-columns:1.2fr 0.8fr;gap:64px;align-items:center;}
@@ -1041,7 +1082,18 @@
         html += `<div class="menu-item"><div class="desc">Carte à venir</div></div>`;
       }
       items.forEach(item => {
-        html += `<div class="menu-item"><div><div class="name">${escapeHtml(item.name)}</div>${item.desc ? `<div class="desc">${escapeHtml(item.desc)}</div>` : ""}</div><div class="price">${escapeHtml(item.price)}</div></div>`;
+        if(item.type === "formule"){
+          html += `<div class="menu-item menu-formule">`;
+          html += `<div class="formule-head"><span class="name">${escapeHtml(item.name)}</span><span class="price">${escapeHtml(item.price)}</span></div>`;
+          if(item.note) html += `<div class="formule-note">${escapeHtml(item.note)}</div>`;
+          (item.groups || []).forEach(g => {
+            if(!g.options || !g.options.length) return;
+            html += `<div class="formule-choice"><div class="choice-label">${escapeHtml(g.label || "Au choix")}</div><div class="choice-options">${g.options.map(o => escapeHtml(o)).join(" · ")}</div></div>`;
+          });
+          html += `</div>`;
+        } else {
+          html += `<div class="menu-item"><div><div class="name">${escapeHtml(item.name)}</div>${item.desc ? `<div class="desc">${escapeHtml(item.desc)}</div>` : ""}</div><div class="price">${escapeHtml(item.price)}</div></div>`;
+        }
       });
       const supplements = cat.supplements || [];
       if(supplements.length){
@@ -1324,6 +1376,44 @@
     list.appendChild(row);
   }
 
+  function addFormuleGroupRow(container, group){
+    group = group || { label:"", options:[] };
+    const row = document.createElement("div");
+    row.className = "mf-group-row";
+    row.innerHTML = `
+      <div class="mf-group-top">
+        <input type="text" class="mf-group-label" placeholder="Ex : Plat au choix" value="${escapeHtml(group.label || "")}">
+        <button type="button" class="remove-item-btn" title="Supprimer ce groupe">✕</button>
+      </div>
+      <textarea class="mf-group-options" placeholder="Une option par ligne, ex :&#10;Galette complète&#10;La légume du moment">${escapeHtml((group.options || []).join("\n"))}</textarea>
+    `;
+    row.querySelector(".remove-item-btn").addEventListener("click", () => row.remove());
+    container.appendChild(row);
+  }
+
+  function addFormuleRow(list, item){
+    item = item || { name:"", price:"", note:"", groups:[] };
+    const block = document.createElement("div");
+    block.className = "formule-edit-block";
+    block.innerHTML = `
+      <div class="formule-edit-top">
+        <input type="text" class="mf-name" placeholder="Nom du menu (ex : Menu midi express)" value="${escapeHtml(item.name || "")}">
+        <input type="text" class="mf-price" placeholder="Prix" value="${escapeHtml(item.price || "")}">
+        <button type="button" class="remove-item-btn" title="Supprimer ce menu">✕</button>
+      </div>
+      <input type="text" class="mf-note" placeholder="Disponibilité (ex : Du mardi au vendredi midi, hors jours fériés)" value="${escapeHtml(item.note || "")}">
+      <div class="mf-groups"></div>
+      <button type="button" class="add-group-btn">+ Ajouter un groupe de choix (ex : Plat au choix)</button>
+    `;
+    const groupsContainer = block.querySelector(".mf-groups");
+    (item.groups || []).forEach(g => addFormuleGroupRow(groupsContainer, g));
+    block.querySelector(".add-group-btn").addEventListener("click", () => {
+      addFormuleGroupRow(groupsContainer, { label:"", options:[] });
+    });
+    block.querySelector(".remove-item-btn").addEventListener("click", () => block.remove());
+    list.appendChild(block);
+  }
+
   function buildCategoryBlock(cat){
     cat = cat || { title:"", note:"", items:[], supplements:[] };
     const block = document.createElement("div");
@@ -1334,7 +1424,10 @@
         <input type="text" class="cat-note" placeholder="Sous-titre optionnel (ex : 100% sarrasin)" value="${escapeHtml(cat.note || "")}">
       </div>
       <div class="menu-edit-list"></div>
-      <button type="button" class="add-item-btn">+ Ajouter un plat</button>
+      <div class="category-edit-add-row">
+        <button type="button" class="add-item-btn">+ Ajouter un plat</button>
+        <button type="button" class="add-formule-btn">+ Ajouter un menu / formule</button>
+      </div>
       <div class="category-supplements">
         <div class="supplements-edit-label">Suppléments affichés sous cette catégorie (optionnel)</div>
         <div class="supplement-edit-list"></div>
@@ -1348,9 +1441,15 @@
     `;
 
     const itemList = block.querySelector(".menu-edit-list");
-    (cat.items || []).forEach(item => addMenuRow(itemList, item));
+    (cat.items || []).forEach(item => {
+      if(item && item.type === "formule") addFormuleRow(itemList, item);
+      else addMenuRow(itemList, item);
+    });
     block.querySelector(".add-item-btn").addEventListener("click", () => {
       addMenuRow(itemList, { name:"", desc:"", price:"" });
+    });
+    block.querySelector(".add-formule-btn").addEventListener("click", () => {
+      addFormuleRow(itemList, { name:"", price:"", note:"", groups:[{label:"", options:[]}] });
     });
 
     const supList = block.querySelector(".supplement-edit-list");
@@ -1494,11 +1593,25 @@
       const title = block.querySelector(".cat-title").value.trim();
       const note = block.querySelector(".cat-note").value.trim();
       const items = [];
-      block.querySelectorAll(".menu-edit-list .menu-edit-item").forEach(row => {
-        const name = row.querySelector(".mi-name").value.trim();
-        const desc = row.querySelector(".mi-desc").value.trim();
-        const price = row.querySelector(".mi-price").value.trim();
-        if(name) items.push({ name, desc, price });
+      block.querySelectorAll(".menu-edit-list > *").forEach(el => {
+        if(el.classList.contains("formule-edit-block")){
+          const name = el.querySelector(".mf-name").value.trim();
+          const price = el.querySelector(".mf-price").value.trim();
+          const note = el.querySelector(".mf-note").value.trim();
+          const groups = [];
+          el.querySelectorAll(".mf-group-row").forEach(g => {
+            const label = g.querySelector(".mf-group-label").value.trim();
+            const options = g.querySelector(".mf-group-options").value
+              .split("\n").map(s => s.trim()).filter(Boolean);
+            if(label || options.length) groups.push({ label, options });
+          });
+          if(name) items.push({ type:"formule", name, price, note, groups });
+        } else {
+          const name = el.querySelector(".mi-name").value.trim();
+          const desc = el.querySelector(".mi-desc").value.trim();
+          const price = el.querySelector(".mi-price").value.trim();
+          if(name) items.push({ name, desc, price });
+        }
       });
       const supplements = [];
       block.querySelectorAll(".supplement-edit-list .menu-edit-item").forEach(row => {
