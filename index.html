@@ -173,12 +173,28 @@
   .menu-note{
     background:var(--creme-clair);border:1px dashed var(--ligne);
     border-radius:12px;padding:16px 20px;font-size:0.86rem;color:#6b7178;
-    margin-bottom:48px;max-width:640px;
+    margin-bottom:32px;max-width:640px;
   }
-  .menu-cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:20px;}
+  .menu-quicknav{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:40px;}
+  .menu-nav-pill{
+    padding:9px 18px;border-radius:999px;border:1px solid var(--ligne);
+    background:#fff;color:var(--ardoise-deep);font-size:0.85rem;text-decoration:none;
+    transition:border-color .2s ease, color .2s ease, background .2s ease;
+    white-space:nowrap;
+  }
+  .menu-nav-pill:hover{border-color:var(--caramel);color:var(--caramel-deep);background:var(--creme-clair);}
+
+  /* Disposition "masonry" : chaque carte garde sa hauteur naturelle,
+     ce qui évite les grands vides quand les catégories ont des tailles très différentes. */
+  .menu-cols{column-count:3;column-gap:20px;}
+  @media(max-width:1080px){.menu-cols{column-count:2;}}
+  @media(max-width:700px){.menu-cols{column-count:1;}}
   .menu-col{
-    padding:32px 28px;background:var(--creme-clair);
+    display:inline-block;width:100%;vertical-align:top;
+    break-inside:avoid;-webkit-column-break-inside:avoid;page-break-inside:avoid;
+    margin:0 0 20px;padding:32px 28px;background:var(--creme-clair);
     border:1px solid var(--ligne);border-radius:16px;
+    scroll-margin-top:110px;
   }
   .menu-col h3{
     font-family:var(--serif);font-style:italic;font-size:1.3rem;font-weight:450;
@@ -511,6 +527,7 @@
       <p>Un aperçu de ce qui vous attend à table. La carte complète, avec les prix et les compositions du moment, est présentée sur place et peut varier selon la saison.</p>
     </div>
     <div class="menu-note">Carte modifiable depuis l'espace professionnel du site (bas de page). Les prix et plats affichés ici sont mis à jour par la gérante ou le gérant.</div>
+    <div class="menu-quicknav" id="menu-quicknav"></div>
     <div class="menu-cols" id="menu-cols"></div>
   </div>
 </section>
@@ -1005,14 +1022,19 @@
 
   function renderMenu(){
     const container = document.getElementById("menu-cols");
+    const nav = document.getElementById("menu-quicknav");
     const categories = (state.menu && state.menu.categories) || [];
     if(!categories.length){
       container.innerHTML = `<div class="menu-col"><div class="menu-item"><div class="desc">Carte à venir</div></div></div>`;
+      nav.innerHTML = "";
       return;
     }
     let html = "";
-    categories.forEach(cat => {
-      html += `<div class="menu-col">`;
+    let navHtml = "";
+    categories.forEach((cat, idx) => {
+      const anchorId = `menu-cat-${idx}`;
+      navHtml += `<a href="#${anchorId}" class="menu-nav-pill">${escapeHtml(cat.title || "Catégorie")}</a>`;
+      html += `<div class="menu-col" id="${anchorId}">`;
       html += `<h3>${escapeHtml(cat.title || "Sans titre")}${cat.note ? ` <span class="menu-subnote">${escapeHtml(cat.note)}</span>` : ""}</h3>`;
       const items = cat.items || [];
       if(!items.length){
@@ -1032,6 +1054,7 @@
       html += `</div>`;
     });
     container.innerHTML = html;
+    nav.innerHTML = categories.length > 1 ? navHtml : "";
   }
 
   function renderGallery(){
